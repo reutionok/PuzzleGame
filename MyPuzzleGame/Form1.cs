@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -95,19 +88,17 @@ namespace MyPuzzleGame
                 isPlaying = true;
             }
         }
-
-
         
-        private void PuzzleCutter(int parts)  // use the number of parts on each side
+        private void PuzzleCutter(int parts)  
         {
-            Control board = puzzleBoard;  // use the control you want to use or the form!
+            Control board = puzzleBoard;  
             int total = parts * parts;
             PB = new MyPictureBox[total];
 
             imgarray = new Image[total];
             int W = image.Width / parts;
             int H = image.Height / parts;
-            int size = puzzleBoard.Height/parts;
+            int size = board.Height/parts;
             int[] indice = new int[parts * parts];
             for (int x = 0; x < parts; x++)
             {
