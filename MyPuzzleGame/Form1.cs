@@ -226,6 +226,7 @@ namespace MyPuzzleGame
                 PB[i].ImageIndex = i;
 
             }
+            isPlaying = false;
             System.Windows.MessageBox.Show("Success will be on your side next time", "Try again!");
         }
     }
