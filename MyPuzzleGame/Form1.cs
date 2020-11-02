@@ -229,29 +229,36 @@ namespace MyPuzzleGame
 
         private void btnSolution_Click(object sender, EventArgs e)
         {
-            //List<Bitmap> newShufImg = new List<Bitmap>(numPieces);
-            //for (int i = 0; i < numPieces; i++)
-            //{
-            //    newShufImg.Add(shufImages[i]);
-            //}
-            //GetBestPuzzleImage(newShufImg);
+            Bitmap[,] bestChoise = GetBestPuzzleImage(shufImages);
+            List<Bitmap> PB = new List<Bitmap>(numPieces);
 
+            //for (int i = 0; i <bestChoise.GetLength(0); i++)
+            //{
+            //    for (int j = 0; j < bestChoise.GetLength(1);j++)
+            //    {
+            //        PB.Add(bestChoise[i, j]);
+            //    }
+            //}
+            //for (int n = 0; n < numPieces; n++)
+            //{
+            //    picBoxes[n].Image = PB[n];
+            //    picBoxes[n].ImageIndex = n;
+            //}
 
             for (int i = 0; i < pieces * pieces; i++)
             {
                 picBoxes[i].Image = images[i];
                 picBoxes[i].ImageIndex = i;
-
             }
             isPlaying = false;
-            System.Windows.MessageBox.Show("Success will be on your side next time", "Try again!");
-
+            System.Windows.MessageBox.Show("Success will be on your side next time", "Try again!");           
+           
         }
 
 
         public Bitmap[,] GetBestPuzzleImage(List<Bitmap> list)
         {
-            List<int> numbers = new List<int>(GetNumbers(list));
+          List<int> numbers = new List<int>(GetNumbers(list));
 
             Bitmap[,] bestChoice = null;
 
@@ -262,6 +269,7 @@ namespace MyPuzzleGame
                 int row = numbers[i];     //кількість рядків
                 int col = list.Count / row;         //кількість стовпців
 
+                
                 Bitmap[,] possibleChoice = new Bitmap[row, col];
 
                 double value = GetBestCurrentVariant(list, row, col, ref possibleChoice);
@@ -296,8 +304,7 @@ namespace MyPuzzleGame
         {
             Bitmap bestPiece;
 
-            double min = Int32.MaxValue;
-            List<int> numbers = new List<int>(GetNumbers(list));
+            double min = Int32.MaxValue;            
 
             for (int j = 0; j < list.Count; j++)    //перебір всіх елементів колекції для даної розстановки
             {
@@ -359,7 +366,7 @@ namespace MyPuzzleGame
             Color[] left = new Color[ first.Height];            
             
                 for (int j = 0; j < first.Height; j++)
-                    left[j] = first.GetPixel(j, first.Width - 1);
+                    left[j] = first.GetPixel(j, first.Height - 1);
             
             Bitmap next = null;
             for (int n = 0; n < list.Count; n++)
@@ -457,7 +464,7 @@ namespace MyPuzzleGame
                 if (up.Length != down.Length)
                     throw new Exception("Щось пішло не так і тут");
 
-                for (int i = 0; i < up.GetLength(1); i++)
+                for (int i = 0; i < up.Length; i++)
                 {
                     bottomDifference += GetDifference(up[i], down[i]);
                 }
