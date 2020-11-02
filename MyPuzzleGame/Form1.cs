@@ -1,34 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 
 namespace MyPuzzleGame
 {
-    public partial  class Form1 : Form
+    public partial class Form1 : Form
     {
         public Form1()
-        {            
+        {
             InitializeComponent();
             radioButton4x4.Checked = true;
         }
 
-        
+
         OpenFileDialog openFileDialog = null;
         PictureBox picBoxWhole = null;
         Bitmap image;
         Bitmap previewImage;
         Image[] images = null;
-        List<Bitmap>shufImages = null;
+        List<Bitmap> shufImages = null;
         MyPictureBox[] picBoxes = null;
         int numPieces = 0;
         int pieces = 4;
         bool isPlaying = false;
-        
+
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-                       if (openFileDialog == null)
+            if (openFileDialog == null)
                 openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -76,7 +77,7 @@ namespace MyPuzzleGame
                     GraphicsUnit.Pixel);
                 objGraphics.Flush();
             }
-            
+
         }
 
         private void btnCut_Click(object sender, EventArgs e)
@@ -104,7 +105,7 @@ namespace MyPuzzleGame
                     pieces = 9;
                 }
                 puzzleBoard.Controls.Clear();
-               
+
                 PuzzleCutter(pieces, pieces);
 
                 picBoxes = new MyPictureBox[numPieces];
@@ -145,11 +146,11 @@ namespace MyPuzzleGame
             int unitX = puzzleBoard.Width / numRow;
             int unitY = puzzleBoard.Height / numCol;
             images = new Image[numPieces];
-           for (int i = 0; i < numPieces; i++)                      
+            for (int i = 0; i < numPieces; i++)
                 CreateBitmapImage(image, images, i, numRow, numCol, unitX, unitY);
-                                 
+
             return images;
-                    
+
         }
 
         MyPictureBox firstBox = null;
@@ -186,7 +187,7 @@ namespace MyPuzzleGame
                         break;
                     }
             }
-            
+
         }
 
         private void SwitchImages(MyPictureBox box1, MyPictureBox box2)
@@ -204,11 +205,11 @@ namespace MyPuzzleGame
 
         private bool isSeccessful()
         {
-            for (int i = 0; i < pieces*pieces; i++)
+            for (int i = 0; i < pieces * pieces; i++)
             {
-                if (picBoxes[i].ImageIndex != picBoxes[i].Index)                                    
+                if (picBoxes[i].ImageIndex != picBoxes[i].Index)
                     return false;
-                
+
             }
             isPlaying = false;
             return true;
@@ -227,50 +228,55 @@ namespace MyPuzzleGame
             }
         }
 
+
+       
         private void btnSolution_Click(object sender, EventArgs e)
         {
             Bitmap[,] bestChoise = GetBestPuzzleImage(shufImages);
             List<Bitmap> PB = new List<Bitmap>(numPieces);
 
-            //for (int i = 0; i <bestChoise.GetLength(0); i++)
+            for (int i = 0; i < bestChoise.GetLength(0); i++)
+            {
+                for (int j = 0; j < bestChoise.GetLength(1); j++)
+                {
+                    PB.Add(bestChoise[i, j]);
+                }
+            }
+            for (int n = 0; n < numPieces; n++)
+            {
+                picBoxes[n].Image = PB[n];
+                picBoxes[n].ImageIndex = n;
+            }
+
+            //for (int i = 0; i < pieces * pieces; i++)
             //{
-            //    for (int j = 0; j < bestChoise.GetLength(1);j++)
-            //    {
-            //        PB.Add(bestChoise[i, j]);
-            //    }
-            //}
-            //for (int n = 0; n < numPieces; n++)
-            //{
-            //    picBoxes[n].Image = PB[n];
-            //    picBoxes[n].ImageIndex = n;
+            //    picBoxes[i].Image = images[i];
+            //    picBoxes[i].ImageIndex = i;
             //}
 
-            for (int i = 0; i < pieces * pieces; i++)
-            {
-                picBoxes[i].Image = images[i];
-                picBoxes[i].ImageIndex = i;
-            }
+
             isPlaying = false;
-            System.Windows.MessageBox.Show("Success will be on your side next time", "Try again!");           
-           
+            System.Windows.MessageBox.Show("Success will be on your side next time", "Try again!");
+
         }
+
 
 
         public Bitmap[,] GetBestPuzzleImage(List<Bitmap> list)
         {
-          List<int> numbers = new List<int>(GetNumbers(list));
+            List<int> numbers = new List<int>(GetNumbers(list));
 
             Bitmap[,] bestChoice = null;
 
-            double min = Int32.MaxValue;  //значення найменшої різниці малюнку(для ивзанчення найкращого результату)
+            double min = Int32.MaxValue;  //значення найменшої різниці малюнку(для визначення найкращого результату)
 
             for (int i = 0; i < numbers.Count; i++)
             {
-                int row = numbers[i];     //кількість рядків
-                int col = list.Count / row;         //кількість стовпців
 
-                
-                Bitmap[,] possibleChoice = new Bitmap[row, col];
+                int row = numbers[i];     //кількість рядків
+            int col = list.Count / row;         //кількість стовпців
+
+            Bitmap[,] possibleChoice = new Bitmap[row, col];
 
                 double value = GetBestCurrentVariant(list, row, col, ref possibleChoice);
 
@@ -304,7 +310,7 @@ namespace MyPuzzleGame
         {
             Bitmap bestPiece;
 
-            double min = Int32.MaxValue;            
+            double min = Int32.MaxValue;
 
             for (int j = 0; j < list.Count; j++)    //перебір всіх елементів колекції для даної розстановки
             {
@@ -314,18 +320,16 @@ namespace MyPuzzleGame
 
                 List<Bitmap> cash = new List<Bitmap>(list);     //колекція доступних елементів
 
+                //elements[0, 0] = (Bitmap)images[0];
                 elements[0, 0] = cash[j];
 
-                cash.RemoveAt(j);
+                
+               cash.RemoveAt(j);
 
-                for (int irow = 0; irow < row - 1; irow++)    // перебір по рядкам
+                for (int irow = 0; irow < row - 1 ; irow++)    // перебір по рядкам
                 {
-                    for (int icol = 0; icol < col - 1; icol++)  //перебір по стовпцям
+                    for (int icol = 0; icol < col - 1 ; icol++)  //перебір по стовпцям
                     {
-                        //for(int icas = 0; icas<cash.Count;icas++)   //перебір по доступним елементам
-                        //{
-                        //}
-
                         bestPiece = GetRightImage(elements[irow, icol], cash, ref total);//отримуємо найкращий правий фрагмент
                         elements[irow, icol + 1] = bestPiece;//додаємо отриманий фрагмент до результату
 
@@ -363,18 +367,18 @@ namespace MyPuzzleGame
         {
             double min = Int32.MaxValue;
 
-            Color[] left = new Color[ first.Height];            
-            
-                for (int j = 0; j < first.Height; j++)
-                    left[j] = first.GetPixel(j, first.Height - 1);
-            
+            Color[] left = new Color[first.Height];
+
+            for (int j = 0; j < first.Height; j++)
+                left[j] = first.GetPixel(j, first.Height - 1);
+
             Bitmap next = null;
             for (int n = 0; n < list.Count; n++)
             {
                 Color[] right = new Color[first.Height];
                 for (int j = 0; j < first.Height; j++)
-                        right[j] = list[n].GetPixel(j,0);
-                
+                    right[j] = list[n].GetPixel(j, 0);
+
 
                 double value = GetRightDifference(left, right);
 
@@ -428,10 +432,10 @@ namespace MyPuzzleGame
         {
             double min = Int32.MaxValue;
             Color[] up = new Color[first.Width];
-            
-            for (int i = 0; i < first.Height; i++)           
-                 up[i] = first.GetPixel(first.Width-1,i);
-            
+
+            for (int i = 0; i < first.Height; i++)
+                up[i] = first.GetPixel(first.Width - 1, i);
+
 
             Bitmap next = null;
             for (int n = 0; n < list.Count; n++)
@@ -439,8 +443,8 @@ namespace MyPuzzleGame
                 Color[] down = new Color[first.Width];
                 for (int i = 0; i < first.Width; i++)
                     down[i] = list[n].GetPixel(0, i);
-                
-               
+
+
                 double value = GetBottomDifference(up, down);
 
                 if (min > value)
@@ -490,93 +494,5 @@ namespace MyPuzzleGame
 
 
 
-
-
-//---------------------------------------
-//    Bitmap[] img = new Bitmap[PB.Length];
-//    Color[,] cl = new Color[img.Length, 35];
-//    for (int i = 0; i < img.Length; i++)
-//    {
-//        img[i] = (Bitmap)PB[i].Image;
-
-//        for (int h = 0; h < img[i].Height; h++)
-//        {
-//            cl[i,h]= img[i].GetPixel(img[i].Width - 1, h);
-//        }
-
-//    }
-
-//    for (int j = 0; j < img.Length; j++)
-//    {
-//        for (int i = 0; i < img.Length; i++)
-//        {
-
-
-//        }
-//    }
-
-//    var p =image.GetPixel(image.Width-1, image.Height-1);
-//    for (int i = 0; i < pieces * pieces; i++)
-//    {
-//        PB[i].Image = imgarray[i];
-//        PB[i].ImageIndex = i;
-
-//    }
-//    isPlaying = false;
-//    System.Windows.MessageBox.Show("Success will be on your side next time", "Try again!");
-//}
-
-
-//// closed match for hues only:
-//int closestColor1(List<Color> colors, Color target)
-//{
-//    var hue1 = target.GetHue();
-//    var diffs = colors.Select(n => getHueDistance(n.GetHue(), hue1));
-//    var diffMin = diffs.Min(n => n);
-//    return diffs.ToList().FindIndex(n => n == diffMin);
-//}
-
-//// closed match in RGB space
-//int closestColor2(List<Color> colors, Color target)
-//{
-//    var colorDiffs = colors.Select(n => ColorDiff(n, target)).Min(n => n);
-//    return colors.FindIndex(n => ColorDiff(n, target) == colorDiffs);
-//}
-
-//// weighed distance using hue, saturation and brightness
-//int closestColor3(List<Color> colors, Color target)
-//{
-//    float hue1 = target.GetHue();
-//    var num1 = ColorNum(target);
-//    var diffs = colors.Select(n => Math.Abs(ColorNum(n) - num1) +
-//                                   getHueDistance(n.GetHue(), hue1));
-//    var diffMin = diffs.Min(x => x);
-//    return diffs.ToList().FindIndex(n => n == diffMin);
-//}
-
-//// color brightness as perceived:
-//float getBrightness(Color c)
-//{ return (c.R * 0.299f + c.G * 0.587f + c.B * 0.114f) / 256f; }
-
-// distance between two hues:
-//float getHueDistance(float hue1, float hue2)
-//        {
-//            float d = Math.Abs(hue1 - hue2); return d > 180 ? 360 - d : d;
-//        }
-
-        ////  weighed only by saturation and brightness (from my trackbars)
-        //float ColorNum(Color c)
-        //{
-        //    return c.GetSaturation() * factorSat +
-        //                getBrightness(c) * factorBri;
-        //}
-
-        //// distance in RGB space
-        //int ColorDiff(Color c1, Color c2)
-        //{
-        //    return (int)Math.Sqrt((c1.R - c2.R) * (c1.R - c2.R)
-        //                           + (c1.G - c2.G) * (c1.G - c2.G)
-        //                           + (c1.B - c2.B) * (c1.B - c2.B));
-        //}
 
 
