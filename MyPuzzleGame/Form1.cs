@@ -232,27 +232,29 @@ namespace MyPuzzleGame
        
         private void btnSolution_Click(object sender, EventArgs e)
         {
-            Bitmap[,] bestChoise = GetBestPuzzleImage(shufImages);
-            List<Bitmap> PB = new List<Bitmap>(numPieces);
+            //виклик метода, який порівнює частини картинки по кольорам крайніх пікселів
+            //Bitmap[,] bestChoise = GetBestPuzzleImage(shufImages);  
+            //List<Bitmap> PB = new List<Bitmap>(numPieces);
 
-            for (int i = 0; i < bestChoise.GetLength(0); i++)
-            {
-                for (int j = 0; j < bestChoise.GetLength(1); j++)
-                {
-                    PB.Add(bestChoise[i, j]);
-                }
-            }
-            for (int n = 0; n < numPieces; n++)
-            {
-                picBoxes[n].Image = PB[n];
-                picBoxes[n].ImageIndex = n;
-            }
-
-            //for (int i = 0; i < pieces * pieces; i++)
+            //for (int i = 0; i < bestChoise.GetLength(0); i++)
             //{
-            //    picBoxes[i].Image = images[i];
-            //    picBoxes[i].ImageIndex = i;
+            //    for (int j = 0; j < bestChoise.GetLength(1); j++)
+            //    {
+            //        PB.Add(bestChoise[i, j]);
+            //    }
             //}
+            //for (int n = 0; n < numPieces; n++)
+            //{
+            //    picBoxes[n].Image = PB[n];
+            //    picBoxes[n].ImageIndex = n;
+            //}
+
+            // метод, який ставить картинки по корректним місцям
+            for (int i = 0; i < numPieces; i++)
+            {
+                picBoxes[i].Image = images[i];
+                picBoxes[i].ImageIndex = i;
+            }
 
 
             isPlaying = false;
