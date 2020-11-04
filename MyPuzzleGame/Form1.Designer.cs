@@ -34,11 +34,11 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.previewPB = new System.Windows.Forms.PictureBox();
             this.playMode = new System.Windows.Forms.GroupBox();
+            this.btnSolution = new System.Windows.Forms.Button();
             this.btnCut = new System.Windows.Forms.Button();
-            this.radioButton9x9 = new System.Windows.Forms.RadioButton();
+            this.radioButton10x10 = new System.Windows.Forms.RadioButton();
             this.radioButton6x6 = new System.Windows.Forms.RadioButton();
             this.radioButton4x4 = new System.Windows.Forms.RadioButton();
-            this.btnSolution = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.previewPB)).BeginInit();
             this.playMode.SuspendLayout();
             this.SuspendLayout();
@@ -92,7 +92,7 @@
             // 
             this.playMode.Controls.Add(this.btnSolution);
             this.playMode.Controls.Add(this.btnCut);
-            this.playMode.Controls.Add(this.radioButton9x9);
+            this.playMode.Controls.Add(this.radioButton10x10);
             this.playMode.Controls.Add(this.radioButton6x6);
             this.playMode.Controls.Add(this.radioButton4x4);
             this.playMode.Location = new System.Drawing.Point(505, 176);
@@ -101,6 +101,17 @@
             this.playMode.TabIndex = 5;
             this.playMode.TabStop = false;
             this.playMode.Text = "Play Mode";
+            // 
+            // btnSolution
+            // 
+            this.btnSolution.Enabled = false;
+            this.btnSolution.Location = new System.Drawing.Point(19, 147);
+            this.btnSolution.Name = "btnSolution";
+            this.btnSolution.Size = new System.Drawing.Size(79, 28);
+            this.btnSolution.TabIndex = 6;
+            this.btnSolution.Text = "Solution";
+            this.btnSolution.UseVisualStyleBackColor = true;
+            this.btnSolution.Click += new System.EventHandler(this.btnSolution_Click);
             // 
             // btnCut
             // 
@@ -113,26 +124,26 @@
             this.btnCut.UseVisualStyleBackColor = true;
             this.btnCut.Click += new System.EventHandler(this.btnCut_Click);
             // 
-            // radioButton9x9
+            // radioButton10x10
             // 
-            this.radioButton9x9.AutoSize = true;
-            this.radioButton9x9.Location = new System.Drawing.Point(35, 67);
-            this.radioButton9x9.Name = "radioButton9x9";
-            this.radioButton9x9.Size = new System.Drawing.Size(42, 17);
-            this.radioButton9x9.TabIndex = 2;
-            this.radioButton9x9.TabStop = true;
-            this.radioButton9x9.Text = "9x9";
-            this.radioButton9x9.UseVisualStyleBackColor = true;
+            this.radioButton10x10.AutoSize = true;
+            this.radioButton10x10.Location = new System.Drawing.Point(35, 67);
+            this.radioButton10x10.Name = "radioButton10x10";
+            this.radioButton10x10.Size = new System.Drawing.Size(57, 17);
+            this.radioButton10x10.TabIndex = 2;
+            this.radioButton10x10.TabStop = true;
+            this.radioButton10x10.Text = "10 x10";
+            this.radioButton10x10.UseVisualStyleBackColor = true;
             // 
             // radioButton6x6
             // 
             this.radioButton6x6.AutoSize = true;
             this.radioButton6x6.Location = new System.Drawing.Point(35, 44);
             this.radioButton6x6.Name = "radioButton6x6";
-            this.radioButton6x6.Size = new System.Drawing.Size(42, 17);
+            this.radioButton6x6.Size = new System.Drawing.Size(48, 17);
             this.radioButton6x6.TabIndex = 1;
             this.radioButton6x6.TabStop = true;
-            this.radioButton6x6.Text = "6x6";
+            this.radioButton6x6.Text = "6 x 6";
             this.radioButton6x6.UseVisualStyleBackColor = true;
             // 
             // radioButton4x4
@@ -140,22 +151,11 @@
             this.radioButton4x4.AutoSize = true;
             this.radioButton4x4.Location = new System.Drawing.Point(35, 21);
             this.radioButton4x4.Name = "radioButton4x4";
-            this.radioButton4x4.Size = new System.Drawing.Size(42, 17);
+            this.radioButton4x4.Size = new System.Drawing.Size(48, 17);
             this.radioButton4x4.TabIndex = 0;
             this.radioButton4x4.TabStop = true;
-            this.radioButton4x4.Text = "4x4";
+            this.radioButton4x4.Text = "4 x 4";
             this.radioButton4x4.UseVisualStyleBackColor = true;
-            // 
-            // btnSolution
-            // 
-            this.btnSolution.Enabled = false;
-            this.btnSolution.Location = new System.Drawing.Point(19, 147);
-            this.btnSolution.Name = "btnSolution";
-            this.btnSolution.Size = new System.Drawing.Size(79, 28);
-            this.btnSolution.TabIndex = 6;
-            this.btnSolution.Text = "Solution";
-            this.btnSolution.UseVisualStyleBackColor = true;
-            this.btnSolution.Click += new System.EventHandler(this.btnSolution_Click);
             // 
             // Form1
             // 
@@ -189,7 +189,7 @@
         private System.Windows.Forms.PictureBox previewPB;
         private System.Windows.Forms.GroupBox playMode;
         private System.Windows.Forms.Button btnCut;
-        private System.Windows.Forms.RadioButton radioButton9x9;
+        private System.Windows.Forms.RadioButton radioButton10x10;
         private System.Windows.Forms.RadioButton radioButton6x6;
         private System.Windows.Forms.RadioButton radioButton4x4;
         private System.Windows.Forms.Button btnSolution;

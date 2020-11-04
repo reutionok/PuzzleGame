@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -54,7 +55,7 @@ namespace MyPuzzleGame
         {
             Bitmap objBmpImage = new Bitmap(width, height);
             Graphics objGraphics = Graphics.FromImage(objBmpImage);
-            objGraphics.Clear(System.Drawing.Color.White);
+            objGraphics.Clear(Color.White);
 
             objGraphics.DrawImage(image,
                 new Rectangle(0, 0, width, height));
@@ -102,7 +103,7 @@ namespace MyPuzzleGame
                 }
                 else
                 {
-                    pieces = 9;
+                    pieces = 10;
                 }
                 puzzleBoard.Controls.Clear();
 
@@ -134,6 +135,7 @@ namespace MyPuzzleGame
                     shufImages.Add((Bitmap)images[indice[i]]);
                     picBoxes[i].Image = images[indice[i]];
                     picBoxes[i].ImageIndex = indice[i];
+
                 }
                 btnSolution.Enabled = true;
                 isPlaying = true;
@@ -233,29 +235,21 @@ namespace MyPuzzleGame
         private void btnSolution_Click(object sender, EventArgs e)
         {
             //виклик метода, який порівнює частини картинки по кольорам крайніх пікселів
-            //Bitmap[,] bestChoise = GetBestPuzzleImage(shufImages);  
-            //List<Bitmap> PB = new List<Bitmap>(numPieces);
+            Bitmap[,] bestChoise = GetBestPuzzleImage(shufImages);
+            List<Bitmap> PB = new List<Bitmap>(numPieces);
 
-            //for (int i = 0; i < bestChoise.GetLength(0); i++)
-            //{
-            //    for (int j = 0; j < bestChoise.GetLength(1); j++)
-            //    {
-            //        PB.Add(bestChoise[i, j]);
-            //    }
-            //}
-            //for (int n = 0; n < numPieces; n++)
-            //{
-            //    picBoxes[n].Image = PB[n];
-            //    picBoxes[n].ImageIndex = n;
-            //}
-
-            // метод, який ставить картинки по корректним місцям
-            for (int i = 0; i < numPieces; i++)
+            for (int i = 0; i < bestChoise.GetLength(0); i++)
             {
-                picBoxes[i].Image = images[i];
-                picBoxes[i].ImageIndex = i;
+                for (int j = 0; j < bestChoise.GetLength(1); j++)
+                {
+                    PB.Add(bestChoise[i, j]);
+                }
             }
-
+            for (int n = 0; n < numPieces; n++)
+            {
+                picBoxes[n].Image = PB[n];
+                picBoxes[n].ImageIndex = n;
+            }
 
             isPlaying = false;
             System.Windows.MessageBox.Show("Success will be on your side next time", "Try again!");
@@ -266,29 +260,32 @@ namespace MyPuzzleGame
 
         public Bitmap[,] GetBestPuzzleImage(List<Bitmap> list)
         {
-            List<int> numbers = new List<int>(GetNumbers(list));
+           // List<int> numbers = new List<int>(GetNumbers(list));
 
             Bitmap[,] bestChoice = null;
 
-            double min = Int32.MaxValue;  //значення найменшої різниці малюнку(для визначення найкращого результату)
+            double min = Int32.MaxValue;
 
-            for (int i = 0; i < numbers.Count; i++)
-            {
+            //for (int i = 0; i < numbers.Count; i++)
+            //{
 
-                int row = numbers[i];     //кількість рядків
-            int col = list.Count / row;         //кількість стовпців
+            //    int row = numbers[i];
+            //    int col = list.Count / row;
+            int row = (int)Math.Sqrt(list.Count);
+            int col = row;
 
             Bitmap[,] possibleChoice = new Bitmap[row, col];
 
-                double value = GetBestCurrentVariant(list, row, col, ref possibleChoice);
+                    double value = GetBestCurrentVariant(list, row, col, ref possibleChoice);
 
-                if (min > value)
-                {
-                    bestChoice = (Bitmap[,])possibleChoice.Clone();
+                    if (min > value)
+                    {
+                        bestChoice = (Bitmap[,])possibleChoice.Clone();
 
-                    min = value;
-                }
-            }
+                        min = value;
+                    }            
+
+           // }
 
             return bestChoice;
         }
@@ -301,6 +298,7 @@ namespace MyPuzzleGame
             {
                 if (list.Count % i == 0)
                 {
+                    
                     numbers.Add(i);
                 }
             }
@@ -308,13 +306,15 @@ namespace MyPuzzleGame
             return numbers;
         }
 
+
+
         private double GetBestCurrentVariant(List<Bitmap> list, int row, int col, ref Bitmap[,] bestChoice)
         {
             Bitmap bestPiece;
 
             double min = Int32.MaxValue;
 
-            for (int j = 0; j < list.Count; j++)    //перебір всіх елементів колекції для даної розстановки
+            for (int j = 0; j < list.Count; j++)
             {
                 double total = 0; //показує повну різницю всього малюнку
 
@@ -322,40 +322,31 @@ namespace MyPuzzleGame
 
                 List<Bitmap> cash = new List<Bitmap>(list);     //колекція доступних елементів
 
-                //elements[0, 0] = (Bitmap)images[0];
                 elements[0, 0] = cash[j];
 
-                
-               cash.RemoveAt(j);
-
-                for (int irow = 0; irow < row - 1 ; irow++)    // перебір по рядкам
+                cash.RemoveAt(j);
+                for (int irow = 0; irow < row; irow++)
                 {
-                    for (int icol = 0; icol < col - 1 ; icol++)  //перебір по стовпцям
+                    for (int icol = 0; icol < col - 1; icol++)
                     {
                         bestPiece = GetRightImage(elements[irow, icol], cash, ref total);//отримуємо найкращий правий фрагмент
                         elements[irow, icol + 1] = bestPiece;//додаємо отриманий фрагмент до результату
 
                         cash.Remove(bestPiece);//видаляємо недоступний елемент
 
+
                     }
+                    if (irow < row - 1)
+                    {
+                        bestPiece = GetBottomImage(elements[irow, 0], cash, ref total);//отримуємо найкращий нижній фрагмент
 
-                    bestPiece = GetBottomImage(elements[irow, 0], cash, ref total);//отримуємо найкращий нижній фрагмент
+                        elements[irow + 1, 0] = bestPiece;//додаємо отриманий фрагмент до результату
 
-                    elements[irow + 1, 0] = bestPiece;//додаємо отриманий фрагмент до результату
-
-                    cash.Remove(bestPiece);//видаляємо недоступний елемент
+                        cash.Remove(bestPiece);//видаляємо недоступний елемент
+                    }
                 }
 
-                //додаємо фрагменти до останнього рядка
-                for (int icol = 0; icol < col - 1; icol++)  //перебір по стовпцям
-                {
-                    bestPiece = GetRightImage(elements[row - 1, icol], cash, ref total);//отримуємо найкращий правий фрагмент
-                    elements[row - 1, icol + 1] = bestPiece;//додаємо отриманий фрагмент до результату
-
-                    cash.Remove(bestPiece);//видаляємо недоступний елемент
-                }
-
-                if (min > total)
+               if (min > total)
                 {
                     bestChoice = (Bitmap[,])elements.Clone();
                     min = total;
@@ -365,6 +356,8 @@ namespace MyPuzzleGame
             return min;
         }
 
+
+
         private Bitmap GetRightImage(Bitmap first, List<Bitmap> list, ref double totalDifference)
         {
             double min = Int32.MaxValue;
@@ -372,14 +365,14 @@ namespace MyPuzzleGame
             Color[] left = new Color[first.Height];
 
             for (int j = 0; j < first.Height; j++)
-                left[j] = first.GetPixel(j, first.Height - 1);
+                left[j] = first.GetPixel(first.Width - 1, j);
 
             Bitmap next = null;
             for (int n = 0; n < list.Count; n++)
             {
                 Color[] right = new Color[first.Height];
                 for (int j = 0; j < first.Height; j++)
-                    right[j] = list[n].GetPixel(j, 0);
+                    right[j] = list[n].GetPixel(0, j);
 
 
                 double value = GetRightDifference(left, right);
@@ -401,7 +394,7 @@ namespace MyPuzzleGame
             try
             {
                 if (left.Length != right.Length)
-                    throw new Exception("Щось пішло не так");
+                    throw new Exception("Pieces are different");
 
                 for (int i = 0; i < left.Length; i++)
                 {
@@ -435,8 +428,8 @@ namespace MyPuzzleGame
             double min = Int32.MaxValue;
             Color[] up = new Color[first.Width];
 
-            for (int i = 0; i < first.Height; i++)
-                up[i] = first.GetPixel(first.Width - 1, i);
+            for (int i = 0; i < first.Width; i++)
+                up[i] = first.GetPixel(i, first.Height - 1);
 
 
             Bitmap next = null;
@@ -444,7 +437,7 @@ namespace MyPuzzleGame
             {
                 Color[] down = new Color[first.Width];
                 for (int i = 0; i < first.Width; i++)
-                    down[i] = list[n].GetPixel(0, i);
+                    down[i] = list[n].GetPixel(i,0);
 
 
                 double value = GetBottomDifference(up, down);
@@ -468,7 +461,7 @@ namespace MyPuzzleGame
             try
             {
                 if (up.Length != down.Length)
-                    throw new Exception("Щось пішло не так і тут");
+                    throw new Exception("Pieces are different");
 
                 for (int i = 0; i < up.Length; i++)
                 {
