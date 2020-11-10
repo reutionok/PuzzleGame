@@ -16,9 +16,6 @@ namespace MyPuzzleGame
             radioButton4x4.Checked = true;
         }
 
-
-        OpenFileDialog openFileDialog = null;
-        PictureBox picBoxWhole = null;
         Bitmap image;
         Bitmap previewImage;
         Image[] images = null;
@@ -30,24 +27,17 @@ namespace MyPuzzleGame
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            if (openFileDialog == null)
-                openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+           using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                imagePath.Text = openFileDialog.FileName;
-                previewImage = CreateBitmapImage(Image.FromFile(openFileDialog.FileName), previewPB.Width, previewPB.Height);
-                image = CreateBitmapImage(Image.FromFile(openFileDialog.FileName), puzzleBoard.Width, puzzleBoard.Height);
-                if (picBoxWhole == null)
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    picBoxWhole = new PictureBox();
-                    picBoxWhole.Height = previewPB.Height;
-                    picBoxWhole.Width = previewPB.Width;
-                    previewPB.Controls.Add(picBoxWhole);
+                    imagePath.Text = openFileDialog.FileName;
+                    previewImage = CreateBitmapImage(Image.FromFile(openFileDialog.FileName), previewPB.Width, previewPB.Height);
+                    image = CreateBitmapImage(Image.FromFile(openFileDialog.FileName), puzzleBoard.Width, puzzleBoard.Height);
+                    previewPB.Image = previewImage;
                     btnCut.Enabled = true;
 
                 }
-
-                picBoxWhole.Image = previewImage;
             }
         }
 
@@ -145,8 +135,8 @@ namespace MyPuzzleGame
         {
 
             numPieces = numRow * numCol;
-            int unitX = puzzleBoard.Width / numRow;
-            int unitY = puzzleBoard.Height / numCol;
+            int unitX = puzzleBoard.Width / numRow;  //кіл-ть пікселів по ширині
+            int unitY = puzzleBoard.Height / numCol;  //по висоті
             images = new Image[numPieces];
             for (int i = 0; i < numPieces; i++)
                 CreateBitmapImage(image, images, i, numRow, numCol, unitX, unitY);
@@ -234,7 +224,6 @@ namespace MyPuzzleGame
        
         private void btnSolution_Click(object sender, EventArgs e)
         {
-            //виклик метода, який порівнює частини картинки по кольорам крайніх пікселів
             Bitmap[,] bestChoise = GetBestPuzzleImage(shufImages);
             List<Bitmap> PB = new List<Bitmap>(numPieces);
 
@@ -329,20 +318,20 @@ namespace MyPuzzleGame
                 {
                     for (int icol = 0; icol < col - 1; icol++)
                     {
-                        bestPiece = GetRightImage(elements[irow, icol], cash, ref total);//отримуємо найкращий правий фрагмент
-                        elements[irow, icol + 1] = bestPiece;//додаємо отриманий фрагмент до результату
+                        bestPiece = GetRightImage(elements[irow, icol], cash, ref total);
+                        elements[irow, icol + 1] = bestPiece;
 
-                        cash.Remove(bestPiece);//видаляємо недоступний елемент
+                        cash.Remove(bestPiece);
 
 
                     }
                     if (irow < row - 1)
                     {
-                        bestPiece = GetBottomImage(elements[irow, 0], cash, ref total);//отримуємо найкращий нижній фрагмент
+                        bestPiece = GetBottomImage(elements[irow, 0], cash, ref total);
 
-                        elements[irow + 1, 0] = bestPiece;//додаємо отриманий фрагмент до результату
+                        elements[irow + 1, 0] = bestPiece;
 
-                        cash.Remove(bestPiece);//видаляємо недоступний елемент
+                        cash.Remove(bestPiece);
                     }
                 }
 
